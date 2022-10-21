@@ -35,21 +35,18 @@ public class PaymentActionsService {
 
     public PaymentActions savePaymentAction(PaymentActions paymentActions) {
         PaymentActions paymentActionsnew = paymentActionsRepository.save(paymentActions);
-        updateInstalmentPayment(paymentActionsnew);
+        updateInstalmentPayment(paymentActions);
         return paymentActionsnew;
     }
 
     public void updateInstalmentPayment(PaymentActions paymentActions) {
-
         Long ammount = paymentActions.getAmmount();
         Long capitalPaid = 0L;
         Long interestPaid = 0L;
         if (ammount > 0) {
-            List<InstalmentPayments> instalmentList = instalmentPaymentsRepository.getPaidInstalmentPaymentId(paymentActions.getLoan().getId());
-            List<InstalmentPayments> saveInstalment = new ArrayList<>();
-            Long size= Long.valueOf(instalmentList.size());
-            Long index=1L;
-            for (InstalmentPayments instalmentPayments : instalmentList) {
+            List<InstalmentPayments> paidInstalmentList = instalmentPaymentsRepository.getPaidInstalmentPaymentId(paymentActions.getLoan().getId());
+            List<InstalmentPayments> saveIntalment = new ArrayList<>();
+            for (InstalmentPayments instalmentPayments : paidInstalmentList) {
                 Long remainingCapital = Long.valueOf(instalmentPayments.getRemainingCapital());
                 Long remainingInterest = Long.valueOf(instalmentPayments.getRemainingInterest());
                 if (ammount <= remainingCapital) {
@@ -57,7 +54,7 @@ public class PaymentActionsService {
                     capitalPaid = capitalPaid + ammount;
                     instalmentPayments.setRemainingCapital(Math.toIntExact(newRemainingCapital));
                     ammount = 0L;
-                   // saveIntalment.add(instalmentPayments);
+                    saveIntalment.add(instalmentPayments);
                     break;
                 } else if (ammount > remainingCapital && ammount <= remainingCapital + remainingInterest) {
                     Long newRemainingCapital = 0L;
@@ -68,50 +65,34 @@ public class PaymentActionsService {
                     instalmentPayments.setRemainingCapital(Math.toIntExact(newRemainingCapital));
                     instalmentPayments.setRemainingInterest(Math.toIntExact(newRemainingInterest));
                     ammount = 0L;
-                    //saveInstalment.add(instalmentPayments);
+                    saveIntalment.add(instalmentPayments);
                     break;
                 } else {
-                    Long newRemainingCapital;
-                    Long newRemainingInterest;
-                    log.info("Ammount:{}",ammount);
-                    Long total=remainingCapital+ remainingInterest;
-                    log.info("Total:{}",total);
-                    log.info("Index:{}",index);
-                    log.info("Size:{}",size);
-                    if(index.equals(size) && ammount > total){
-                        ammount = ammount - (remainingCapital + remainingInterest);
-                        capitalPaid = capitalPaid + remainingCapital;
-                        interestPaid = interestPaid + remainingInterest;
-                        newRemainingInterest = 0L;
-                        instalmentPayments.setRemainingInterest(Math.toIntExact(newRemainingInterest));
-                        newRemainingCapital=0L-ammount;
-                        instalmentPayments.setRemainingCapital(Math.toIntExact(newRemainingCapital));
-                    }
-                    else {
                     ammount = ammount - (remainingCapital + remainingInterest);
                     capitalPaid = capitalPaid + remainingCapital;
                     interestPaid = interestPaid + remainingInterest;
-                     newRemainingCapital = 0L;
+                    Long newRemainingCapital = 0L;
                     instalmentPayments.setRemainingCapital(Math.toIntExact(newRemainingCapital));
-                     newRemainingInterest = 0L;
+                    Long newRemainingInterest = 0L;
                     instalmentPayments.setRemainingInterest(Math.toIntExact(newRemainingInterest));
-                    //saveInstalment.add(instalmentPayments);
-                        index++;
-                    }
+                    saveIntalment.add(instalmentPayments);
                 }
             }
             createInstalmentAction(paymentActions, capitalPaid, interestPaid);
-            //instalmentPaymentsRepository.saveAll(saveInstalment);
+            //instalmentPaymentsRepository.saveAll(saveIntalment);
+            if (ammount > 0) {
+                log.info("Ammount to be restored:{}", ammount);
+            }
         }
     }
 
 
-    public InstalmentActions createInstalmentAction(PaymentActions paymentActions, Long capital, Long interest) {
+    public void createInstalmentAction(PaymentActions paymentActions, Long capital, Long interest) {
         InstalmentActions instalmentActions = new InstalmentActions();
         instalmentActions.setCapitalAmmount(capital);
         instalmentActions.setInterestAmmount(interest);
         instalmentActions.setPaymentActions(paymentActions);
-        return instalmentActionsRepository.save(instalmentActions);
+        instalmentActionsRepository.save(instalmentActions);
     }
 
 
