@@ -18,9 +18,9 @@ public class InstalmentActions {
     private long id;
 
     @Column(name = "capital_ammount")
-    private long capitalAmmount;
+    private double capitalAmmount;
     @Column(name = "interest_ammount")
-    private long interestAmmount;
+    private double interestAmmount;
     @ManyToOne
     @JoinColumn(name = "payment", referencedColumnName = "id")
     private PaymentActions paymentActions;
@@ -33,19 +33,19 @@ public class InstalmentActions {
         this.id = id;
     }
 
-    public long getCapitalAmmount() {
+    public double getCapitalAmmount() {
         return capitalAmmount;
     }
 
-    public void setCapitalAmmount(long capitalAmmount) {
+    public void setCapitalAmmount(double capitalAmmount) {
         this.capitalAmmount = capitalAmmount;
     }
 
-    public long getInterestAmmount() {
+    public double getInterestAmmount() {
         return interestAmmount;
     }
 
-    public void setInterestAmmount(long interestAmmount) {
+    public void setInterestAmmount(double interestAmmount) {
         this.interestAmmount = interestAmmount;
     }
 

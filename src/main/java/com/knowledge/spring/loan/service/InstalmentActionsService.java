@@ -47,7 +47,7 @@ public class InstalmentActionsService {
         }
     }
 
-    public InstalmentActions updateWorkingCaptial(InstalmentActionsDTO instalmentActionsDTO) {
+    public InstalmentActions updateInstalmentAction(InstalmentActionsDTO instalmentActionsDTO) {
         Optional<InstalmentActions> workingCaprialExists = instalmentActionsRepository.findById(instalmentActionsDTO.getId());
         InstalmentActions instalmentActions = instalmentActionMapper.toEntity(instalmentActionsDTO);
         if (workingCaprialExists.isPresent()) {

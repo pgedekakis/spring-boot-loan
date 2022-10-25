@@ -41,55 +41,55 @@ public class PaymentActionsService {
 
     public void updateInstalmentPayment(PaymentActions paymentActions) {
 
-        Long ammount = paymentActions.getAmmount();
-        Long capitalPaid = 0L;
-        Long interestPaid = 0L;
+        Double ammount = paymentActions.getAmmount();
+        Double capitalPaid = 0D;
+        Double interestPaid = 0D;
         if (ammount > 0) {
             List<InstalmentPayments> instalmentList = instalmentPaymentsRepository.getPaidInstalmentPaymentId(paymentActions.getLoan().getId());
             List<InstalmentPayments> saveInstalment = new ArrayList<>();
             Long size = Long.valueOf(instalmentList.size());
             Long index = 1L;
             for (InstalmentPayments instalmentPayments : instalmentList) {
-                Long remainingCapital = Long.valueOf(instalmentPayments.getRemainingCapital());
-                Long remainingInterest = Long.valueOf(instalmentPayments.getRemainingInterest());
-                if (ammount <= remainingCapital) {
-                    Long newRemainingCapital = remainingCapital - ammount;
-                    capitalPaid = capitalPaid + ammount;
-                    instalmentPayments.setRemainingCapital(Math.toIntExact(newRemainingCapital));
-                    ammount = 0L;
+                Double remainingCapital = instalmentPayments.getRemainingCapital();
+                Double remainingInterest = instalmentPayments.getRemainingInterest();
+                if (ammount <= remainingInterest) {
+                    Double newRemainingInterest = remainingInterest - ammount;
+                    interestPaid = interestPaid + ammount;
+                    instalmentPayments.setRemainingInterest(newRemainingInterest);
+                    ammount = 0D;
                     // saveIntalment.add(instalmentPayments);
                     break;
-                } else if (ammount > remainingCapital && ammount <= remainingCapital + remainingInterest) {
-                    Long newRemainingCapital = 0L;
-                    ammount = ammount - remainingCapital;
-                    Long newRemainingInterest = remainingInterest - ammount;
-                    capitalPaid = capitalPaid + remainingCapital;
-                    interestPaid = interestPaid + ammount;
-                    instalmentPayments.setRemainingCapital(Math.toIntExact(newRemainingCapital));
-                    instalmentPayments.setRemainingInterest(Math.toIntExact(newRemainingInterest));
-                    ammount = 0L;
+                } else if (ammount > remainingInterest && ammount <= remainingInterest + remainingCapital) {
+                    Double newRemainingInterest = 0D;
+                    ammount = ammount - remainingInterest;
+                    Double newRemainingCapital = remainingCapital - ammount;
+                    interestPaid = interestPaid + remainingInterest;
+                    capitalPaid = capitalPaid + ammount;
+                    instalmentPayments.setRemainingInterest(newRemainingInterest);
+                    instalmentPayments.setRemainingCapital(newRemainingCapital);
+                    ammount = 0D;
                     //saveInstalment.add(instalmentPayments);
                     break;
                 } else {
-                    Long newRemainingCapital;
-                    Long newRemainingInterest;
-                    Long total = remainingCapital + remainingInterest;
+                    Double newRemainingCapital;
+                    Double newRemainingInterest;
+                    Double total = remainingCapital + remainingInterest;
                     if (index.equals(size) && ammount > total) {
                         ammount = ammount - (remainingCapital + remainingInterest);
                         capitalPaid = capitalPaid + remainingCapital;
                         interestPaid = interestPaid + remainingInterest;
-                        newRemainingInterest = 0L;
-                        instalmentPayments.setRemainingInterest(Math.toIntExact(newRemainingInterest));
-                        newRemainingCapital = 0L - ammount;
-                        instalmentPayments.setRemainingCapital(Math.toIntExact(newRemainingCapital));
+                        newRemainingInterest = 0D;
+                        instalmentPayments.setRemainingInterest(newRemainingInterest);
+                        newRemainingCapital = 0D - ammount;
+                        instalmentPayments.setRemainingCapital(newRemainingCapital);
                     } else {
                         ammount = ammount - (remainingCapital + remainingInterest);
                         capitalPaid = capitalPaid + remainingCapital;
                         interestPaid = interestPaid + remainingInterest;
-                        newRemainingCapital = 0L;
-                        instalmentPayments.setRemainingCapital(Math.toIntExact(newRemainingCapital));
-                        newRemainingInterest = 0L;
-                        instalmentPayments.setRemainingInterest(Math.toIntExact(newRemainingInterest));
+                        newRemainingCapital = 0D;
+                        instalmentPayments.setRemainingCapital(newRemainingCapital);
+                        newRemainingInterest = 0D;
+                        instalmentPayments.setRemainingInterest(newRemainingInterest);
                         //saveInstalment.add(instalmentPayments);
                         index++;
                     }
@@ -101,7 +101,7 @@ public class PaymentActionsService {
     }
 
 
-    public InstalmentActions createInstalmentAction(PaymentActions paymentActions, Long capital, Long interest) {
+    public InstalmentActions createInstalmentAction(PaymentActions paymentActions, Double capital, Double interest) {
         InstalmentActions instalmentActions = new InstalmentActions();
         instalmentActions.setCapitalAmmount(capital);
         instalmentActions.setInterestAmmount(interest);
@@ -123,53 +123,50 @@ public class PaymentActionsService {
         Optional<PaymentActions> paymentActionExists = paymentActionsRepository.findById(paymentActionId);
         if (paymentActionExists.isPresent()) {
             PaymentActions paymentActions = paymentActionExists.get();
-            List<InstalmentPayments> paymentsList = paymentActionsRepository.getInstalmentPayments(paymentActions.getLoan().getId());
+            List<InstalmentPayments> paymentsList = instalmentPaymentsRepository.getInstalmentPayments(paymentActions.getLoan().getId());
             List<InstalmentPayments> newInstalments = new ArrayList<>();
-            InstalmentActions instalmentActionId = paymentActionsRepository.getInstalmentActionsIds(paymentActionId);
-            Long ammount = paymentActions.getAmmount();
+            InstalmentActions instalmentActionId = instalmentActionsRepository.getInstalmentActionsIds(paymentActionId);
+            Double ammount = paymentActions.getAmmount();
             for (InstalmentPayments instalmentPayments : paymentsList) {
-                Long instalmentInterest = Long.valueOf(instalmentPayments.getInterest());
-                Long instalmentCapital = Long.valueOf(instalmentPayments.getCapital());
-                Long remainingInterest = Long.valueOf(instalmentPayments.getRemainingInterest());
-                Long remainingCapital = Long.valueOf(instalmentPayments.getRemainingCapital());
-                Long interestToBeRestored = instalmentInterest - remainingInterest;
-                Long capitalToBeRestored = instalmentCapital - remainingCapital;
+                Double instalmentInterest = instalmentPayments.getInterest();
+                Double instalmentCapital = instalmentPayments.getCapital();
+                Double remainingInterest = instalmentPayments.getRemainingInterest();
+                Double remainingCapital = instalmentPayments.getRemainingCapital();
                 if (remainingCapital < 0) {
                     ammount = ammount + remainingCapital;
-                    if (ammount < 0) {
-                        instalmentPayments.setRemainingCapital(Math.toIntExact(ammount));
+                    if (ammount <= 0) {
+                        instalmentPayments.setRemainingCapital(ammount);
                         newInstalments.add(instalmentPayments);
                         break;
                     } else {
-                        instalmentPayments.setRemainingCapital(0);
+                        remainingCapital = 0D;
+                        instalmentPayments.setRemainingCapital(remainingCapital);
                     }
                 }
-                if (remainingInterest < instalmentInterest) {
-                    if (ammount >= interestToBeRestored) {
-                        ammount = ammount - interestToBeRestored;
-                        instalmentPayments.setRemainingInterest(Math.toIntExact(instalmentInterest));
-                    } else if (ammount < interestToBeRestored) {
-                        remainingInterest = remainingInterest + ammount;
-                        instalmentPayments.setRemainingInterest(Math.toIntExact(remainingInterest));
-                        newInstalments.add(instalmentPayments);
-                        break;
-                    }
-                }
-                if (ammount <= capitalToBeRestored) {
+
+                if (ammount < instalmentCapital - remainingCapital) {
                     remainingCapital = remainingCapital + ammount;
-                    instalmentPayments.setRemainingCapital(Math.toIntExact(remainingCapital));
+                    instalmentPayments.setRemainingCapital(remainingCapital);
                     newInstalments.add(instalmentPayments);
                     break;
-                } else if (ammount > capitalToBeRestored) {
-                    remainingCapital = Long.valueOf(instalmentCapital);
-                    ammount = ammount - capitalToBeRestored;
-                    instalmentPayments.setRemainingCapital(Math.toIntExact(remainingCapital));
+                } else if (ammount >= instalmentCapital - remainingCapital
+                        && ammount <= (instalmentCapital - remainingCapital) + (instalmentInterest - remainingInterest)) {
+                    ammount = ammount - instalmentCapital - remainingCapital;
+                    instalmentPayments.setRemainingCapital(instalmentCapital);
+                    remainingInterest = remainingInterest + ammount;
+                    instalmentPayments.setRemainingInterest(remainingInterest);
+                    newInstalments.add(instalmentPayments);
+                    break;
+                } else {
+                    ammount = ammount - ((instalmentInterest - remainingInterest) + (instalmentCapital - remainingCapital));
+                    instalmentPayments.setRemainingInterest(instalmentInterest);
+                    instalmentPayments.setRemainingCapital(instalmentCapital);
                     newInstalments.add(instalmentPayments);
                 }
             }
-            instalmentActionsRepository.deleteById(instalmentActionId.getId());
+            //instalmentActionsRepository.deleteById(instalmentActionId.getId());
             instalmentPaymentsRepository.saveAll(newInstalments);
-            paymentActionsRepository.deleteById(paymentActionId);
+            // paymentActionsRepository.deleteById(paymentActionId);
         } else {
             log.info("Payment does not exist with this id");
         }

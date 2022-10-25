@@ -12,10 +12,10 @@ import lombok.NoArgsConstructor;
 public class InstalmentPaymentsDTO {
 
     private long id;
-    private int capital;
-    private int remainingCapital;
-    private int interest;
-    private int remainingInterest;
+    private double capital;
+    private double remainingCapital;
+    private double interest;
+    private double remainingInterest;
     private Loan loan;
     private Loaner loaner;
 

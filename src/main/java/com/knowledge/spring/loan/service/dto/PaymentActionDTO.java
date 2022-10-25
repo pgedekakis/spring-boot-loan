@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PaymentActionDTO {
     private long id;
-    private long ammount;
+    private double ammount;
     private Loan loan;
     private Loaner loaner;
 

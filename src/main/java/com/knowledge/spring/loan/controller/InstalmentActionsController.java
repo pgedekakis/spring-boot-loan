@@ -36,12 +36,12 @@ public class InstalmentActionsController {
     }
 
     @DeleteMapping("/instalment-action/{instalmentActionId}")
-    public void deleteWorkingCapital(@PathVariable Long instalmentActionId) {
+    public void deleteInstalmentAction(@PathVariable Long instalmentActionId) {
         instalmentActionsService.deleteInstalmentAction(instalmentActionId);
     }
 
     @PutMapping("/instalment-action")
-    public ResponseEntity<InstalmentActions> updateWorkingCapital(@RequestBody InstalmentActionsDTO instalmentActionsDTO) {
-        return new ResponseEntity<>(instalmentActionsService.updateWorkingCaptial(instalmentActionsDTO), HttpStatus.OK);
+    public ResponseEntity<InstalmentActions> updateInstalmentAction(@RequestBody InstalmentActionsDTO instalmentActionsDTO) {
+        return new ResponseEntity<>(instalmentActionsService.updateInstalmentAction(instalmentActionsDTO), HttpStatus.OK);
     }
 }

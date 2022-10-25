@@ -49,8 +49,8 @@ public class LoanerService {
 
     public void deleteLoaner(Long loanerId) {
         Optional<Loaner> loanerExist = loanerRepository.findById(loanerId);
-        List<Long> workingIds = loanerRepository.getWorkingIds(loanerId);
-        List<Long> paymentsIds = loanerRepository.getPaymentsIds(loanerId);
+        List<Long> workingIds = paymentActionsRepository.getWorkingIds(loanerId);
+        List<Long> paymentsIds = instalmentPaymentsRepository.getPaymentsIds(loanerId);
         if (!workingIds.isEmpty()) {
             paymentActionsRepository.deleteAllById(workingIds);
         }

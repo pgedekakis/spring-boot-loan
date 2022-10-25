@@ -45,7 +45,7 @@ public class BankService {
 
     public void deleteBank(Long bankId) {
         Optional<Bank> bankExists = bankRepository.findById(bankId);
-        List<Long> loanIds = bankRepository.getLoanIds(bankId);
+        List<Long> loanIds = loanRepository.getLoanIdsByBank(bankId);
         if (bankExists.isPresent()) {
             if (!loanIds.isEmpty()) {
                 loanRepository.deleteAllById(loanIds);

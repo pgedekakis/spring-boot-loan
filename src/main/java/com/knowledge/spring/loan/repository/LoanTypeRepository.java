@@ -12,6 +12,4 @@ import java.util.List;
 public interface LoanTypeRepository extends JpaRepository<LoanType, Long> {
 
 
-    @Query(value = "SELECT loan.id FROM Loan loan WHERE loan.loanType.id=:loanTypeId")
-    List<Long> getLoanIds(@Param("loanTypeId") Long loanTypeId);
 }

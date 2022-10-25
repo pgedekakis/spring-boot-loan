@@ -21,7 +21,7 @@ public class PaymentActionsController {
     }
 
     @PostMapping("/paymentAction")
-    public ResponseEntity<PaymentActions> saveWorking(@RequestBody PaymentActions paymentActions) {
+    public ResponseEntity<PaymentActions> savePaymentAction(@RequestBody PaymentActions paymentActions) {
         return new ResponseEntity<>(paymentActionsService.savePaymentAction(paymentActions), HttpStatus.CREATED);
     }
 
@@ -31,12 +31,12 @@ public class PaymentActionsController {
     }
 
     @GetMapping("/paymentAction/{paymentActionsId}")
-    public ResponseEntity<PaymentActions> getWorkingById(@PathVariable Long paymentActionsId) {
+    public ResponseEntity<PaymentActions> getPaymentActionById(@PathVariable Long paymentActionsId) {
         return new ResponseEntity<>(paymentActionsService.getPaymentActionsById(paymentActionsId), HttpStatus.OK);
     }
 
     @DeleteMapping("/paymentAction/{paymentActionsId}")
-    public void deleteWorking(@PathVariable Long paymentActionsId) {
+    public void deletePaymentAction(@PathVariable Long paymentActionsId) {
         paymentActionsService.deletePaymentAction(paymentActionsId);
     }
 

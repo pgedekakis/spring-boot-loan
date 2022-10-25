@@ -2,7 +2,6 @@ package com.knowledge.spring.loan.service;
 
 
 import com.knowledge.spring.loan.excption.ResourceNotFoundException;
-import com.knowledge.spring.loan.model.Loan;
 import com.knowledge.spring.loan.model.LoanType;
 import com.knowledge.spring.loan.repository.LoanRepository;
 import com.knowledge.spring.loan.repository.LoanTypeRepository;
@@ -45,7 +44,7 @@ public class LoanTypeService {
 
     public void deleteLoanType(Long loanTypeId) {
         Optional<LoanType> loanTypeExists = loanTypeRepository.findById(loanTypeId);
-        List<Long> getLoanIds = loanTypeRepository.getLoanIds(loanTypeId);
+        List<Long> getLoanIds = loanRepository.getLoanIdsByType(loanTypeId);
         if (loanTypeExists.isPresent()) {
             if (!getLoanIds.isEmpty()) {
                 loanRepository.deleteAllById(getLoanIds);

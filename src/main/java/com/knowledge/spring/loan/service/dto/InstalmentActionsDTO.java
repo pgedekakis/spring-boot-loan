@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class InstalmentActionsDTO {
     private long id;
-    private long capitalAmmount;
-    private long interestAmmount;
+    private double capitalAmmount;
+    private double interestAmmount;
     private PaymentActions paymentActions;
 
     public InstalmentActionsDTO(InstalmentActions instalmentActions) {

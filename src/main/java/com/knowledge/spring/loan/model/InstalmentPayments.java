@@ -21,13 +21,13 @@ public class InstalmentPayments {
     private long id;
 
     @Column(name = "capital")
-    private int capital;
+    private double capital;
     @Column(name = "remaining_capital")
-    private int remainingCapital;
+    private double remainingCapital;
     @Column(name = "interest")
-    private int interest;
+    private double interest;
     @Column(name = "remaining_interest")
-    private int remainingInterest;
+    private double remainingInterest;
 
     @ManyToOne
     @JoinColumn(name = "loan", referencedColumnName = "id")
@@ -45,23 +45,23 @@ public class InstalmentPayments {
         this.id = id;
     }
 
-    public int getCapital() {
+    public double getCapital() {
         return capital;
     }
 
-    public void setCapital(int capital) {
+    public void setCapital(double capital) {
         this.capital = capital;
     }
 
-    public int getRemainingCapital() {
+    public double getRemainingCapital() {
         return remainingCapital;
     }
 
-    public void setRemainingCapital(int remainingCapital) {
+    public void setRemainingCapital(double remainingCapital) {
         this.remainingCapital = remainingCapital;
     }
 
-    public int getInterest() {
+    public double getInterest() {
         return interest;
     }
 
@@ -69,11 +69,11 @@ public class InstalmentPayments {
         this.interest = interest;
     }
 
-    public int getRemainingInterest() {
+    public double getRemainingInterest() {
         return remainingInterest;
     }
 
-    public void setRemainingInterest(int remainingInterest) {
+    public void setRemainingInterest(double remainingInterest) {
         this.remainingInterest = remainingInterest;
     }
 

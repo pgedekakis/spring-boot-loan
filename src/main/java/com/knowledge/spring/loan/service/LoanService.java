@@ -55,7 +55,7 @@ public class LoanService {
 
     public void deleteLoan(Long loanId) {
         Optional<Loan> loanExists = loanRepository.findById(loanId);
-        List<Long> paymentsIds = loanRepository.getInstalmentPaymentsIds(loanId);
+        List<Long> paymentsIds = instalmentPaymentsRepository.getInstalmentPaymentsIds(loanId);
         if (loanExists.isPresent()) {
             if (!paymentsIds.isEmpty()) {
                 instalmentPaymentsRepository.deleteAllById(paymentsIds);

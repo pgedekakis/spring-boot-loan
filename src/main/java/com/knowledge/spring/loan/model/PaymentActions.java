@@ -19,7 +19,7 @@ public class PaymentActions {
     private long id;
 
     @Column(name = "ammount")
-    private long ammount;
+    private double ammount;
     @ManyToOne
     @JoinColumn(name = "loan", referencedColumnName = "id")
     private Loan loan;
@@ -43,7 +43,7 @@ public class PaymentActions {
         this.id = id;
     }
 
-    public long getAmmount() {
+    public double getAmmount() {
         return ammount;
     }
 
