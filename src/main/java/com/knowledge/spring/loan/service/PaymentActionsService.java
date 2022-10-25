@@ -125,6 +125,7 @@ public class PaymentActionsService {
             PaymentActions paymentActions = paymentActionExists.get();
             List<InstalmentPayments> paymentsList = paymentActionsRepository.getInstalmentPayments(paymentActions.getLoan().getId());
             List<InstalmentPayments> newInstalments = new ArrayList<>();
+            InstalmentActions instalmentActionId=paymentActionsRepository.getInstalmentActionsIds(paymentActionId);
             Long ammount = paymentActions.getAmmount();
             Long newRemainingInterest;
             Long newRemainingCapital;
@@ -169,9 +170,9 @@ public class PaymentActionsService {
                     newInstalments.add(instalmentPayments);
                 }
             }
-            // instalmentActionsRepository.deleteById(instalmentActionId.getId());
+             instalmentActionsRepository.deleteById(instalmentActionId.getId());
             instalmentPaymentsRepository.saveAll(newInstalments);
-            // paymentActionsRepository.deleteById(paymentActionId);
+             paymentActionsRepository.deleteById(paymentActionId);
         } else {
             log.info("Payment does not exist with this id");
         }
