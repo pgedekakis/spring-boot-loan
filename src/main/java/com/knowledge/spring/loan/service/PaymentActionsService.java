@@ -125,54 +125,51 @@ public class PaymentActionsService {
             PaymentActions paymentActions = paymentActionExists.get();
             List<InstalmentPayments> paymentsList = paymentActionsRepository.getInstalmentPayments(paymentActions.getLoan().getId());
             List<InstalmentPayments> newInstalments = new ArrayList<>();
-            InstalmentActions instalmentActionId=paymentActionsRepository.getInstalmentActionsIds(paymentActionId);
+            InstalmentActions instalmentActionId = paymentActionsRepository.getInstalmentActionsIds(paymentActionId);
             Long ammount = paymentActions.getAmmount();
-            Long newRemainingInterest;
-            Long newRemainingCapital;
             for (InstalmentPayments instalmentPayments : paymentsList) {
-                Long instalmentInterst = Long.valueOf(instalmentPayments.getInterest());
+                Long instalmentInterest = Long.valueOf(instalmentPayments.getInterest());
                 Long instalmentCapital = Long.valueOf(instalmentPayments.getCapital());
                 Long remainingInterest = Long.valueOf(instalmentPayments.getRemainingInterest());
                 Long remainingCapital = Long.valueOf(instalmentPayments.getRemainingCapital());
-                Long interestToBeRestored = instalmentInterst - remainingInterest;
+                Long interestToBeRestored = instalmentInterest - remainingInterest;
                 Long capitalToBeRestored = instalmentCapital - remainingCapital;
                 if (remainingCapital < 0) {
                     ammount = ammount + remainingCapital;
-                    if(ammount<0){
+                    if (ammount < 0) {
                         instalmentPayments.setRemainingCapital(Math.toIntExact(ammount));
                         newInstalments.add(instalmentPayments);
                         break;
-                    }
-                    else {
+                    } else {
                         instalmentPayments.setRemainingCapital(0);
                     }
                 }
-                if (remainingInterest < instalmentInterst) {
+                if (remainingInterest < instalmentInterest) {
                     if (ammount >= interestToBeRestored) {
                         ammount = ammount - interestToBeRestored;
-                        instalmentPayments.setRemainingInterest(Math.toIntExact(instalmentInterst));
+                        instalmentPayments.setRemainingInterest(Math.toIntExact(instalmentInterest));
                     } else if (ammount < interestToBeRestored) {
-                        newRemainingInterest = remainingInterest + ammount;
-                        instalmentPayments.setRemainingInterest(Math.toIntExact(newRemainingInterest));
+                        remainingInterest = remainingInterest + ammount;
+                        instalmentPayments.setRemainingInterest(Math.toIntExact(remainingInterest));
                         newInstalments.add(instalmentPayments);
                         break;
                     }
                 }
                 if (ammount <= capitalToBeRestored) {
-                    newRemainingCapital = remainingCapital + ammount;
-                    instalmentPayments.setRemainingCapital(Math.toIntExact(newRemainingCapital));
+                    remainingCapital = remainingCapital + ammount;
+                    instalmentPayments.setRemainingCapital(Math.toIntExact(remainingCapital));
                     newInstalments.add(instalmentPayments);
                     break;
-                } else if ( ammount > capitalToBeRestored) {
-                    newRemainingCapital = Long.valueOf(instalmentCapital);
+                } else if (ammount > capitalToBeRestored) {
+                    remainingCapital = Long.valueOf(instalmentCapital);
                     ammount = ammount - capitalToBeRestored;
-                    instalmentPayments.setRemainingCapital(Math.toIntExact(newRemainingCapital));
+                    instalmentPayments.setRemainingCapital(Math.toIntExact(remainingCapital));
                     newInstalments.add(instalmentPayments);
                 }
             }
-             instalmentActionsRepository.deleteById(instalmentActionId.getId());
+            instalmentActionsRepository.deleteById(instalmentActionId.getId());
             instalmentPaymentsRepository.saveAll(newInstalments);
-             paymentActionsRepository.deleteById(paymentActionId);
+            paymentActionsRepository.deleteById(paymentActionId);
         } else {
             log.info("Payment does not exist with this id");
         }
