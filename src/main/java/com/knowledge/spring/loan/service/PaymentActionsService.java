@@ -132,18 +132,6 @@ public class PaymentActionsService {
                 Double instalmentCapital = instalmentPayments.getCapital();
                 Double remainingInterest = instalmentPayments.getRemainingInterest();
                 Double remainingCapital = instalmentPayments.getRemainingCapital();
-                if (remainingCapital < 0) {
-                    ammount = ammount + remainingCapital;
-                    if (ammount <= 0) {
-                        instalmentPayments.setRemainingCapital(ammount);
-                        newInstalments.add(instalmentPayments);
-                        break;
-                    } else {
-                        remainingCapital = 0D;
-                        instalmentPayments.setRemainingCapital(remainingCapital);
-                    }
-                }
-
                 if (ammount < instalmentCapital - remainingCapital) {
                     remainingCapital = remainingCapital + ammount;
                     instalmentPayments.setRemainingCapital(remainingCapital);
@@ -151,7 +139,7 @@ public class PaymentActionsService {
                     break;
                 } else if (ammount >= instalmentCapital - remainingCapital
                         && ammount <= (instalmentCapital - remainingCapital) + (instalmentInterest - remainingInterest)) {
-                    ammount = ammount - instalmentCapital - remainingCapital;
+                    ammount = ammount - (instalmentCapital - remainingCapital);
                     instalmentPayments.setRemainingCapital(instalmentCapital);
                     remainingInterest = remainingInterest + ammount;
                     instalmentPayments.setRemainingInterest(remainingInterest);
@@ -164,9 +152,9 @@ public class PaymentActionsService {
                     newInstalments.add(instalmentPayments);
                 }
             }
-            //instalmentActionsRepository.deleteById(instalmentActionId.getId());
+            instalmentActionsRepository.deleteById(instalmentActionId.getId());
             instalmentPaymentsRepository.saveAll(newInstalments);
-            // paymentActionsRepository.deleteById(paymentActionId);
+            paymentActionsRepository.deleteById(paymentActionId);
         } else {
             log.info("Payment does not exist with this id");
         }
