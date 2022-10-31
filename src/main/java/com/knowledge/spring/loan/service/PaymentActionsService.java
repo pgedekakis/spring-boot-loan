@@ -168,8 +168,6 @@ public class PaymentActionsService {
         } else {
             log.info("Cannot update non existent action");
         }
-
-
         return paymentActions;
     }
 }
