@@ -12,12 +12,12 @@ import java.sql.Date;
 @Data
 public class RoleDTO {
     private long id;
-    private String desciption;
+    private String description;
     private Date deactivationDate;
 
     public RoleDTO(Role role) {
         this.setId(role.getId());
-        this.setDesciption(role.getDescription());
+        this.setDescription(role.getDescription());
         this.setDeactivationDate(role.getDeactivationDate());
     }
 }

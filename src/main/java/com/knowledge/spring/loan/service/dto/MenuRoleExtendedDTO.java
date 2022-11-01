@@ -9,13 +9,15 @@ import lombok.Data;
 import lombok.extern.jackson.Jacksonized;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.Set;
 
 @Data
 @Jacksonized
 public class MenuRoleExtendedDTO extends MenuDTO implements Serializable {
 
     @JsonProperty("role")
-    private Role role;
+    private Set<Role> roleList;
 
     public void setMenuDTO(MenuDTO menuDTO){
         this.setId(menuDTO.getId());
@@ -27,9 +29,9 @@ public class MenuRoleExtendedDTO extends MenuDTO implements Serializable {
     @JsonIgnore
     public MenuDTO getMenuDTO(){
         MenuDTO menuDTO=new MenuDTO();
-        menuDTO.setPath(menuDTO.getPath());
-        menuDTO.setDescription(menuDTO.getDescription());
-        menuDTO.setDeactivationDate(menuDTO.getDeactivationDate());
+        menuDTO.setPath(this.getPath());
+        menuDTO.setDescription(this.getDescription());
+        menuDTO.setDeactivationDate(this.getDeactivationDate());
         return menuDTO;
     }
 
