@@ -6,6 +6,7 @@ import com.knowledge.spring.loan.repository.MenuRepository;
 import com.knowledge.spring.loan.service.MenuService;
 import com.knowledge.spring.loan.service.dto.MenuDTO;
 import com.knowledge.spring.loan.service.dto.MenuRoleExtendedDTO;
+import com.knowledge.spring.loan.service.mapper.MenuMapper;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,10 +25,12 @@ public class MenuController {
 
     private MenuService menuService;
     private MenuRepository menuRepository;
+    private MenuMapper menuMapper;
 
-    public MenuController(MenuService menuService,MenuRepository menuRepository) {
+    public MenuController(MenuService menuService, MenuRepository menuRepository, MenuMapper menuMapper) {
         this.menuService = menuService;
-        this.menuRepository=menuRepository;
+        this.menuRepository = menuRepository;
+        this.menuMapper = menuMapper;
     }
 
     @GetMapping("/menu")
@@ -52,17 +55,18 @@ public class MenuController {
 
     @PostMapping("/menu/form")
     public MenuRoleExtendedDTO createMenuRole(@RequestBody MenuRoleExtendedDTO menuRoleExtendedDTO, HttpServletRequest request, HttpServletResponse response) {
-        Optional<Menu> menuExists=menuRepository.findById(menuRoleExtendedDTO.getId());
-        if(menuExists.isPresent()){
-            log.info("Menu already exists,try updating");
-        }
-        else if(menuRoleExtendedDTO != null ) {
+        Optional<Menu> menuExists = menuRepository.findById(menuRoleExtendedDTO.getId());
+        if (menuExists.isPresent()) {
+            Menu menu = menuMapper.toEntity(menuRoleExtendedDTO.getMenuDTO());
+            menuService.deleteMenu(menuRoleExtendedDTO.getId());
+            menuRepository.save(menu);
+            menuService.createRoleEntityLoop(menuRoleExtendedDTO, menu);
+        } else if (menuRoleExtendedDTO != null) {
             menuService.createMenuRoles(menuRoleExtendedDTO);
-        }
-        else if(menuRoleExtendedDTO == null){
+        } else if (menuRoleExtendedDTO == null) {
             log.info("DTO is null");
-            response.setStatus( HttpServletResponse.SC_BAD_REQUEST  );
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
-         return menuRoleExtendedDTO;
+        return menuRoleExtendedDTO;
     }
 }

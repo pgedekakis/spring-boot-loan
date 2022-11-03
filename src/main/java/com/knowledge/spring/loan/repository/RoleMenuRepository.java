@@ -17,4 +17,7 @@ public interface RoleMenuRepository extends JpaRepository<RoleMenu,Long> {
 
     @Query(value = "SELECT roleMenu.id FROM RoleMenu  roleMenu WHERE roleMenu.role.id=:roleId")
     List<Long> getMenuRoleIds(@Param("roleId")Long roleId);
+    @Query(value = "SELECT roleMenu FROM RoleMenu  roleMenu WHERE roleMenu.role.id=:roleId")
+    List<RoleMenu> getRoleMenu(@Param("roleId")Long roleId);
+
 }

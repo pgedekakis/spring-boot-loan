@@ -1,24 +1,25 @@
 package com.knowledge.spring.loan.service.dto;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.knowledge.spring.loan.model.EntityTable;
-import com.knowledge.spring.loan.model.Role;
+import com.knowledge.spring.loan.controller.EntityExtendDTO;
 import lombok.Data;
 import lombok.extern.jackson.Jacksonized;
 
 import java.io.Serializable;
-import java.util.Set;
+import java.util.List;
 
 @Data
 @Jacksonized
-public class MenuRoleExtendedDTO extends MenuDTO implements Serializable {
+public class MenuExtendDTO extends MenuDTO implements Serializable {
 
-    @JsonProperty("role")
-    private Set<Role> roleList;
     @JsonProperty("entity")
-    private Set<EntityTable> entityList;
+    private List<EntityExtendDTO> entityList;
+
+    @JsonProperty("properties")
+    private List<PropertyDTO> propertyList;
+
+
 
     public void setMenuDTO(MenuDTO menuDTO) {
         this.setId(menuDTO.getId());
@@ -36,6 +37,4 @@ public class MenuRoleExtendedDTO extends MenuDTO implements Serializable {
         menuDTO.setDeactivationDate(this.getDeactivationDate());
         return menuDTO;
     }
-
-
 }

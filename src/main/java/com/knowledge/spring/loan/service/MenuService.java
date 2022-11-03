@@ -1,9 +1,7 @@
 package com.knowledge.spring.loan.service;
 
 import com.knowledge.spring.loan.excption.ResourceNotFoundException;
-import com.knowledge.spring.loan.model.Menu;
-import com.knowledge.spring.loan.model.Role;
-import com.knowledge.spring.loan.model.RoleMenu;
+import com.knowledge.spring.loan.model.*;
 import com.knowledge.spring.loan.repository.MenuEntityRepository;
 import com.knowledge.spring.loan.repository.MenuEntityRoleRepository;
 import com.knowledge.spring.loan.repository.MenuRepository;
@@ -57,16 +55,15 @@ public class MenuService {
         List<Long> menuEntityIds = menuEntityRepository.getRoleMenuIds(menuId);
         List<Long> menuEntityRoleIds = menuEntityRoleRepository.getRoleMenuEntityIds(menuId);
         if (menuExists.isPresent()) {
+            if (!menuEntityRoleIds.isEmpty()) {
+                menuEntityRoleRepository.deleteAllById(menuEntityRoleIds);
+            }
             if (!roleMenuIds.isEmpty()) {
                 roleMenuRepository.deleteAllById(roleMenuIds);
             }
             if (!menuEntityIds.isEmpty()) {
                 menuEntityRepository.deleteAllById(menuEntityIds);
             }
-            if (!menuEntityRoleIds.isEmpty()) {
-                menuEntityRoleRepository.deleteAllById(menuEntityRoleIds);
-            }
-            menuRepository.deleteById(menuId);
         }
     }
 
@@ -84,21 +81,29 @@ public class MenuService {
     public MenuRoleExtendedDTO createMenuRoles(MenuRoleExtendedDTO menuRoleExtendedDTO) {
         Menu menu = menuMapper.toEntity(menuRoleExtendedDTO.getMenuDTO());
         Menu newMenu = menuRepository.save(menu);
-        createMenuRole(menuRoleExtendedDTO, newMenu);
+        createRoleEntityLoop(menuRoleExtendedDTO, newMenu);
         return menuRoleExtendedDTO;
     }
 
-    public MenuRoleExtendedDTO createMenuRole(MenuRoleExtendedDTO menuRoleExtendedDTO, Menu menu) {
+    public MenuRoleExtendedDTO createRoleEntityLoop(MenuRoleExtendedDTO menuRoleExtendedDTO, Menu menu) {
         Set<Role> roleList = menuRoleExtendedDTO.getRoleList();
+        Set<EntityTable> entityList = menuRoleExtendedDTO.getEntityList();
         List<RoleMenu> roleMenuList = new ArrayList<>();
+        List<MenuEntity> menuEntityList = new ArrayList<>();
         for (Role role : roleList) {
             RoleMenu roleMenu = new RoleMenu();
             roleMenu.setMenu(menu);
             roleMenu.setRole(role);
             roleMenuList.add(roleMenu);
-            log.info("The list is:{}", roleMenuList);
+        }
+        for (EntityTable entityTable : entityList) {
+            MenuEntity menuEntity = new MenuEntity();
+            menuEntity.setMenu(menu);
+            menuEntity.setEntityTable(entityTable);
+            menuEntityList.add(menuEntity);
         }
         roleMenuRepository.saveAll(roleMenuList);
+        menuEntityRepository.saveAll(menuEntityList);
         return menuRoleExtendedDTO;
     }
 }

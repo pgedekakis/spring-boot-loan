@@ -50,11 +50,11 @@ public class EntityTableService {
         List<Long> menuEntityIds = menuEntityRepository.getMenuRoleIds(entityId);
         List<Long> menuEntityRoleIds = menuEntityRoleRepository.getEntityIds(entityId);
         if (entityExists.isPresent()) {
-            if (!menuEntityIds.isEmpty()) {
-                menuEntityRepository.deleteAllById(menuEntityIds);
-            }
             if (!menuEntityRoleIds.isEmpty()) {
                 menuEntityRoleRepository.deleteAllById(menuEntityRoleIds);
+            }
+            if (!menuEntityIds.isEmpty()) {
+                menuEntityRepository.deleteAllById(menuEntityIds);
             }
             entityTableRepository.deleteById(entityId);
         } else {
